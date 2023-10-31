@@ -1,0 +1,45 @@
+import ibm_db
+import pandas as pd
+
+# Replace these values with your database credentials
+db_credentials = {
+    "hostname": "your-db-hostname",
+    "port": "your-db-port",
+    "database": "your-db-name",
+    "username": "your-username",
+    "password": "your-password",
+}
+
+# Establish a connection to the database
+conn_str = (
+    "DRIVER={{IBM DB2 ODBC DRIVER}};"
+    f"DATABASE={db_credentials['database']};"
+    f"HOSTNAME={db_credentials['hostname']};"
+    f"PORT={db_credentials['port']};"
+    f"PROTOCOL=TCPIP;"
+    f"UID={db_credentials['username']};"
+    f"PWD={db_credentials['password']};"
+)
+
+try:
+    conn = ibm_db.connect(conn_str, "", "")
+    print("Connected to the database")
+
+    # Define your SQL query
+    sql_query = "SELECT * FROM your_table_name"
+
+    # Execute the query and fetch the data into a Pandas DataFrame
+    data = pd.read_sql_query(sql_query, conn)
+
+    # Perform data analysis (e.g., calculate mean, count, etc.)
+    mean_value = data['your_column_name'].mean()
+    count_value = data['your_column_name'].count()
+
+    print(f"Mean value: {mean_value}")
+    print(f"Count: {count_value}")
+
+except Exception as e:
+    print(f"Error: {e}")
+finally:
+    ibm_db.close(conn)
+    print("Database connection closed")
